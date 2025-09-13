@@ -51,6 +51,8 @@ public class Estate {
     public void setOwnerId(Integer ownerId) { this.ownerId = ownerId; }
     public Integer getEstateTypeId() { return estateTypeId; }
     public void setEstateTypeId(Integer estateTypeId) { this.estateTypeId = estateTypeId; }
+    public EstateType getEstateType() { return estateType; }
+    public void setEstateType(EstateType estateType) { this.estateType = estateType; }
     public Integer getAddressId() { return addressId; }
     public void setAddressId(Integer addressId) { this.addressId = addressId; }
     public Address getAddress() { return address; }
