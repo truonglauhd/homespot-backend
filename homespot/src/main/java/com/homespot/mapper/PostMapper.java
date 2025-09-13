@@ -11,7 +11,6 @@ public class PostMapper {
         Post post = new Post();
         post.setTitle(dto.getTitle());
         post.setDescription(dto.getDescription());
-        post.setType(dto.getType());
         post.setPrice(dto.getPrice());
         post.setExpiredAt(dto.getExpiredAt());
         post.setEstate(estate);
@@ -23,7 +22,6 @@ public class PostMapper {
         dto.setId(post.getId());
         dto.setTitle(post.getTitle());
         dto.setDescription(post.getDescription());
-        dto.setType(post.getType());
         dto.setPrice(post.getPrice());
         dto.setPostAt(post.getPostAt());
         dto.setExpiredAt(post.getExpiredAt());
