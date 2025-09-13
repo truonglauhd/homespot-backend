@@ -17,15 +17,13 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
            JOIN e.address a
            JOIN a.ward w
            JOIN w.province pr
-           WHERE (:type         IS NULL OR p.type = :type)
-             AND (:estateTypeId IS NULL OR e.estateType.id = :estateTypeId)
+           WHERE (:estateTypeId IS NULL OR e.estateType.id = :estateTypeId)
              AND (:provinceId   IS NULL OR pr.id = :provinceId)
              AND (:wardId       IS NULL OR w.id = :wardId)
              AND (:minPrice     IS NULL OR p.price >= :minPrice)
              AND (:maxPrice     IS NULL OR p.price <= :maxPrice)
            """)
     Page<Post> search(
-            @Param("type") String type,
             @Param("estateTypeId") Integer estateTypeId,
             @Param("provinceId") Integer provinceId,
             @Param("wardId") Integer wardId,

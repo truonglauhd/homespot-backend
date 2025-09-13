@@ -29,7 +29,6 @@ public class PostController {
 
     @GetMapping("/search")
     public Page<PostResponse> searchPosts(
-            @RequestParam(required = false) String type,
             @RequestParam(required = false) Integer estateTypeId,
             @RequestParam(required = false) Integer provinceId,
             @RequestParam(required = false) Integer wardId,
@@ -37,7 +36,7 @@ public class PostController {
             @RequestParam(required = false) BigDecimal maxPrice,
             Pageable pageable
     ) {
-        Page<Post> posts = postRepository.search(type, estateTypeId, provinceId, wardId, minPrice, maxPrice, pageable);
+        Page<Post> posts = postRepository.search(estateTypeId, provinceId, wardId, minPrice, maxPrice, pageable);
         return posts.map(PostMapper::toResponse);
     }
 
