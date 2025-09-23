@@ -9,6 +9,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.util.StringUtils;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import com.homespot.service.CustomUserDetailsService;
 
 import java.io.IOException;
@@ -25,24 +26,68 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
-        String header = request.getHeader("Authorization");
-        String token = null;
+            HttpServletResponse response,
+            FilterChain filterChain) throws ServletException, IOException {
 
-        if (StringUtils.hasText(header) && header.startsWith("Bearer ")) {
-            token = header.substring(7);
+        String requestURI = request.getRequestURI();
+        String method = request.getMethod();
+
+        // Skip JWT processing for auth endpoints, OPTIONS requests, and error pages
+        if (requestURI.startsWith("/api/auth/") ||
+                "OPTIONS".equals(method) ||
+                requestURI.startsWith("/error")) {
+            System.out.println("=== SKIPPING JWT FILTER ===");
+            System.out.println("Method: " + method);
+            System.out.println("URI: " + requestURI);
+            System.out.println("Headers: " + java.util.Collections.list(request.getHeaderNames()));
+            System.out.println("==============================");
+            filterChain.doFilter(request, response);
+            return;
         }
 
-        if (token != null && jwtUtil.validateToken(token)) {
-            String email = jwtUtil.getSubject(token);
-            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+        String header = request.getHeader("Authorization");
+        String token = null;
+        String username = null;
 
-            UsernamePasswordAuthenticationToken auth =
-                new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
+        // Log requests to /api/estates for debugging
+        if (request.getRequestURI().startsWith("/api/estates")) {
+            System.out.println("=== ESTATE REQUEST ===");
+            System.out.println("Request URI: " + request.getRequestURI());
+            System.out.println("Request Method: " + request.getMethod());
+            System.out.println("Authorization header: " + header);
+            System.out.println("=====================================");
+        }
 
-            SecurityContextHolder.getContext().setAuthentication(auth);
+        try {
+            if (StringUtils.hasText(header) && header.startsWith("Bearer ")) {
+                token = header.substring(7);
+                // Extract username/email from token
+                username = jwtUtil.getSubject(token);
+            }
+
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+                // Validate token (your method only takes String parameter)
+                boolean isValid = jwtUtil.validateToken(token);
+
+                if (isValid) {
+                    UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+                            userDetails, null, userDetails.getAuthorities());
+                    auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                    // Add debug logging here
+                    System.out.println("=== JWT FILTER DEBUG ===");
+                    System.out.println("Setting authentication for user: " + userDetails.getUsername());
+                    System.out.println("User authorities: " + userDetails.getAuthorities());
+                    System.out.println("========================");
+
+                    SecurityContextHolder.getContext().setAuthentication(auth);
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("JWT Authentication failed: " + e.getMessage());
+            // Don't block the request, just continue without authentication
         }
 
         filterChain.doFilter(request, response);

@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/homespot.iml" filepath="$PROJECT_DIR$/.idea/homespot.iml" />
+      <module fileurl="file://$PROJECT_DIR$/homespot/homespot.iml" filepath="$PROJECT_DIR$/homespot/homespot.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/homespot-backend.iml" filepath="$PROJECT_DIR$/.idea/homespot-backend.iml" />
     </modules>
   </component>
 </project>

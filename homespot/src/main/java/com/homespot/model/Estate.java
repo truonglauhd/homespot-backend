@@ -1,6 +1,7 @@
 package com.homespot.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -32,7 +33,8 @@ public class Estate {
 
     private BigDecimal area;
 
-    @Column(name = "created_at")
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "estate")
@@ -44,7 +46,37 @@ public class Estate {
             inverseJoinColumns = @JoinColumn(name = "amenity_id"))
     private Set<Amenity> amenities;
 
-    // getters/setters
+    @OneToMany(mappedBy = "estate")
+    private List<EstateFeature> features;
+
+    @OneToMany(mappedBy = "estate")
+    private List<AgentHistory> agentHistories;
+    // Add these fields to your Estate class:
+@Column(name = "status")
+private String status;
+
+@Column(name = "description") 
+private String description;
+
+@Column(name = "price")
+private BigDecimal price;
+
+@Column(name = "agent_id")
+private Integer agentId;
+
+// Add these getter/setter methods:
+public String getStatus() { return status; }
+public void setStatus(String status) { this.status = status; }
+
+public String getDescription() { return description; }
+public void setDescription(String description) { this.description = description; }
+
+public BigDecimal getPrice() { return price; }
+public void setPrice(BigDecimal price) { this.price = price; }
+
+public Integer getAgentId() { return agentId; }
+public void setAgentId(Integer agentId) { this.agentId = agentId; }
+
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
     public Integer getOwnerId() { return ownerId; }
@@ -65,4 +97,8 @@ public class Estate {
     public void setAmenities(Set<Amenity> amenities) { this.amenities = amenities; }
     public List<EstateImage> getImages() { return images; }
     public void setImages(List<EstateImage> images) { this.images = images; }
+    public List<EstateFeature> getFeatures() { return features; }
+    public void setFeatures(List<EstateFeature> features) { this.features = features; }
+    public List<AgentHistory> getAgentHistories() { return agentHistories; }
+    public void setAgentHistories(List<AgentHistory> agentHistories) { this.agentHistories = agentHistories; }
 }

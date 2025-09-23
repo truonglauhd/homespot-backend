@@ -11,6 +11,8 @@ import java.math.BigDecimal;
 import com.homespot.repository.PostRepository;
 import com.homespot.model.Post;
 import com.homespot.mapper.PostMapper;
+import com.homespot.dto.PostDetailResponse;
+import com.homespot.mapper.PostDetailMapper;
 
 import java.util.List;
 
@@ -44,6 +46,13 @@ public class PostController {
     @GetMapping("/{id}")
     public PostResponse getPost(@PathVariable Integer id) {
         return postService.getPostById(id);
+    }
+
+    @GetMapping("/{id}/detail")
+    public PostDetailResponse getPostDetail(@PathVariable Integer id) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Post not found with id: " + id));
+        return PostDetailMapper.toDetailResponse(post);
     }
 
     @PostMapping

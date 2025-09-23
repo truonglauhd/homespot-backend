@@ -19,14 +19,22 @@ public class AgentHistory {
     @JoinColumn(name = "agent_id", nullable = false)
     private User agent;
 
-    @Column(name = "assigned_at", nullable = false, updatable = false,
-            columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
+    @Column(name = "assigned_at", nullable = false, updatable = false)
     private LocalDateTime assignedAt = LocalDateTime.now();
 
     @Column(name = "unassigned_at")
     private LocalDateTime unassignedAt;
 
-    // Getters and setters
+    // Constructors
+    public AgentHistory() {}
+
+    public AgentHistory(Estate estate, User agent) {
+        this.estate = estate;
+        this.agent = agent;
+        this.assignedAt = LocalDateTime.now();
+    }
+
+    // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -41,4 +49,20 @@ public class AgentHistory {
 
     public LocalDateTime getUnassignedAt() { return unassignedAt; }
     public void setUnassignedAt(LocalDateTime unassignedAt) { this.unassignedAt = unassignedAt; }
+
+    // Utility methods
+    public boolean isActive() {
+        return unassignedAt == null;
+    }
+
+    public void unassign() {
+        this.unassignedAt = LocalDateTime.now();
+    }
+
+    @PrePersist
+    public void prePersist() {
+        if (assignedAt == null) {
+            assignedAt = LocalDateTime.now();
+        }
+    }
 }

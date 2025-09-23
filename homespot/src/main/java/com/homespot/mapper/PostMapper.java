@@ -26,6 +26,24 @@ public class PostMapper {
         dto.setPostAt(post.getPostAt());
         dto.setExpiredAt(post.getExpiredAt());
         dto.setEstateId(post.getEstate().getId());
+        
+        if (post.getEstate() != null) {
+            if (post.getEstate().getEstateType() != null) {
+                dto.setType(post.getEstate().getEstateType().getName());
+                dto.setEstateTypeId(post.getEstate().getEstateType().getId());
+            }
+            
+            dto.setArea(post.getEstate().getArea());
+            
+            if (post.getEstate().getAddress() != null) {
+                dto.setAddress(post.getEstate().getAddress().getName());
+            }
+            
+            if (post.getEstate().getImages() != null && !post.getEstate().getImages().isEmpty()) {
+                dto.setImageUrl(post.getEstate().getImages().get(0).getImageUrl());
+            }
+        }
+        
         return dto;
     }
 }

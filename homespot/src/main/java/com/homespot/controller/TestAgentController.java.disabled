@@ -1,0 +1,70 @@
+package com.homespot.controller;
+
+import com.homespot.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api/agent")
+public class TestAgentController {
+
+    @Autowired
+    private UserService userService;
+
+    public TestAgentController() {
+        System.out.println("=== TestAgentController CREATED ===");
+    }
+
+    @GetMapping("/test")
+    public ResponseEntity<String> test() {
+        System.out.println("=== AGENT TEST ENDPOINT CALLED ===");
+        return ResponseEntity.ok("Agent test controller is working!");
+    }
+
+    @GetMapping("/role-check")
+    public ResponseEntity<?> checkRoles() {
+        try {
+            System.out.println("=== ROLE CHECK ENDPOINT CALLED ===");
+            
+            var currentUser = userService.getCurrentUser();
+            System.out.println("Current user: " + (currentUser != null ? currentUser.getEmail() : "null"));
+            
+            var userRoles = userService.getCurrentUserRoles();
+            System.out.println("User roles: " + userRoles);
+            
+            boolean hasAgent = userService.hasRole("Agent");
+            boolean hasAdmin = userService.hasRole("Admin");
+            boolean hasAnyRole = userService.hasAnyRole("Agent", "Admin");
+            
+            System.out.println("Has 'Agent' role: " + hasAgent);
+            System.out.println("Has 'Admin' role: " + hasAdmin);
+            System.out.println("Has any role (Agent/Admin): " + hasAnyRole);
+            
+            if (!userService.hasAnyRole("Agent", "Admin")) {
+                return ResponseEntity.status(403)
+                    .body(Map.of("error", "Access denied. Agent or Admin role required.", 
+                                "debug", Map.of(
+                                    "userRoles", userRoles,
+                                    "hasAgent", hasAgent,
+                                    "hasAdmin", hasAdmin,
+                                    "userEmail", currentUser != null ? currentUser.getEmail() : "null"
+                                )));
+            }
+            
+            return ResponseEntity.ok(Map.of(
+                "message", "SUCCESS! Role check passed - you have agent/admin access",
+                "userRoles", userRoles,
+                "userEmail", currentUser != null ? currentUser.getEmail() : "unknown",
+                "hasAgent", hasAgent,
+                "hasAdmin", hasAdmin
+            ));
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500)
+                .body(Map.of("error", "Failed role check: " + e.getMessage()));
+        }
+    }
+}

@@ -12,6 +12,10 @@ public class PostResponse {
     private LocalDateTime postAt;
     private LocalDateTime expiredAt;
     private Integer estateId;
+    private Integer estateTypeId;
+    private String address;
+    private BigDecimal area;
+    private String imageUrl;
 
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
@@ -29,4 +33,12 @@ public class PostResponse {
     public void setExpiredAt(LocalDateTime expiredAt) { this.expiredAt = expiredAt; }
     public Integer getEstateId() { return estateId; }
     public void setEstateId(Integer estateId) { this.estateId = estateId; }
+    public Integer getEstateTypeId() { return estateTypeId; }
+    public void setEstateTypeId(Integer estateTypeId) { this.estateTypeId = estateTypeId; }
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
+    public BigDecimal getArea() { return area; }
+    public void setArea(BigDecimal area) { this.area = area; }
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 }
